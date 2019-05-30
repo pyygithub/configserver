@@ -1,0 +1,94 @@
+server:
+  port: 8805
+  servlet:
+    context-path: /ocean
+    session:
+      timeout: 1800s
+
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+##### 对于qq邮箱而言 密码指的就是发送方的授权码
+################################# mybatis 配置  ################################
+pagehelper:
+  helperDialect: oracle
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+mybatis:
+  type-aliases-package: com.thtf.ocean.entity
+  mapper-locations: 'classpath*:com/thtf/ocean/mapper/*.xml'
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+mapper:
+  mappers:
+    - com.thtf.ocean.dao.CommonMapper
+  not-empty: false
+  identity: ORACLE
+
+###### 发送消息的内容 body 为消息主题  appid为服务内容  appname 服务名称
+message:
+  body: 用户需要重置密码
+  application:
+    appid: -1         # 目前系统不存在子系统（暂时通过配置处理）
+    appname: 忘记密码  #
+
+# cas服务器配置
+cas:
+  server-url-prefix: http://localhost/cas
+  server-login-url: http://localhost/cas/login
+  client-host-url: http://localhost:82
+  validation-type: cas3
+  authentication-url-patterns: /*
+  validation-url-patterns: /*
+  use-session: true
+  redirect-after-validation: false
+
+#日志级别
+logging:
+  level:
+    com.thtf.ocean: debug
+
+#################################### 事物拦截路径表达式 ####################################
+#transaction:
+#  expression: execution(* cn.com.thtf.midlinebureau.service..*.*(..))
+#  enable: true      #是否启动事物配置
+
+#################################### 数据源连接信息配置 ####################################
+spring.datasource:
+  driver-class-name: oracle.jdbc.driver.OracleDriver
+  url: 'jdbc:oracle:thin:@//10.10.50.172:1521/jianzai'
+  username: c##jianzai
+  password: admin
+  initialSize: 10
+  max-active: 100
+  max-idle: 30
+  min-idle: 1
+  max-wait: 10000
+  test-while-idle: true
+  test-on-borrow: true
+  test-on-return: true
+  validation-query: SELECT 1
+  validation-interval: 30000
+  remove-abandoned: true
+  remove-abandoned-timeout: 60
+  log-abandoned: true
+
+####  success 登陆成功跳转页面, out 登出跳转页面 ###################
+login:
+  success:
+    path: http://localhost:82/index.html
+  out:
+    path: http://localhost:82/ocean/login
+
+##### 不需要认证的接口
+ignore-pattern:
+  paths: /ocean/message/create
+#  paths: ocean/
+
+############################ 角色为管理员的人员id,多个管理员用,隔开 ################################
+admin:
+  id: 1130300806147342340
